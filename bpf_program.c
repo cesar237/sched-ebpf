@@ -80,8 +80,8 @@ TRACEPOINT_PROBE(sched, sched_switch) {
         task->se.avg.runnable_avg, task->se.avg.util_avg, task->se.avg.util_est
     );
 
-    bpf_trace_printk("Deltas: instr %llu (%llu) time %llu",
-        inst_start, delta.inst, delta.time);
+    bpf_trace_printk("Deltas: instr %llu time %llu",
+        inst_start, delta.time);
 
     return 0;
 }

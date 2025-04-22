@@ -43,9 +43,6 @@ The project uses eBPF (extended Berkeley Packet Filter) to efficiently collect p
 git clone https://github.com/cesar237/sched-ebpf.git
 cd sched-ebpf
 
-# Install dependencies
-pip install -r requirements.txt
-
 # Install BCC (if not already installed)
 # Ubuntu/Debian:
 sudo apt-get install bpfcc-tools python3-bpfcc
