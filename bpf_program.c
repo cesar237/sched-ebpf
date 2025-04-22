@@ -76,7 +76,7 @@ TRACEPOINT_PROBE(sched, sched_switch) {
     );
 
     bpf_trace_printk(
-        "Current task avg: runnable_avg %lu util_avg %lu util_est %u",
+        "Current task avg: runnable_avg %lu util_avg %lu util_est %lu",
         task->se.avg.runnable_avg, task->se.avg.util_avg, task->se.avg.util_est
     );
 
