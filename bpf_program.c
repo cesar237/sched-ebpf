@@ -1,6 +1,8 @@
 #include <uapi/linux/ptrace.h>
+#include <linux/sched.h>
 
 #define MAX_CPUS 128
+
 
 struct perf_delta {
     u64 clk;
@@ -31,15 +33,6 @@ TRACEPOINT_PROBE(sched, sched_switch) {
 
     int cpu = bpf_get_smp_processor_id();
 
-    /*
-    perf_read may return negative values for errors.
-    If cpu id is greater than BPF_PERF_ARRAY size,
-    counters values will be very large negative number.
-    NOTE: Use bpf_perf_event_value is recommended over
-    bpf_perf_event_read or map.perf_read() due to
-    issues in ABI. map.perf_read_value() need to be
-    implemented in future.
-    */
     u64 clk_start = clk.perf_read(cpu);
     u64 inst_start = inst.perf_read(cpu);
     u64 time_start = bpf_ktime_get_ns();
@@ -74,6 +67,18 @@ TRACEPOINT_PROBE(sched, sched_switch) {
     }
 
     #define SCALE_FACTOR 1000000
+
+    struct task_struct *task = (struct task_struct *)bpf_get_current_task();
+
+    bpf_trace_printk(
+        "Current task: pid %d vruntime %llu",
+        task->pid, task->se.vruntime
+    );
+
+    bpf_trace_printk(
+        "Current task avg: runnable_avg %lu util_avg %lu util_est %u",
+        task->se.avg.runnable_avg, task->se.avg.util_avg, task->se.avg.util_est
+    );
 
     bpf_trace_printk("Deltas: instr %llu (%llu) time %llu",
         inst_start, delta.inst, delta.time);
